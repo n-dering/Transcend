@@ -1,12 +1,12 @@
 import { Translations } from "@/app/page";
-import React from "react";
 
-interface TranslationRowsProps {
+export const TranslationRows = ({
+	data,
+	handleValueChange,
+}: {
 	data: Translations;
 	handleValueChange: (e: React.ChangeEvent<HTMLInputElement>, langKey: string, id: number) => void;
-}
-
-const TranslationRows: React.FC<TranslationRowsProps> = ({ data, handleValueChange }) => {
+}) => {
 	const allKeys = new Set<string>();
 	Object.values(data).forEach((translations) => {
 		translations.forEach(({ key }) => allKeys.add(key));
@@ -19,6 +19,7 @@ const TranslationRows: React.FC<TranslationRowsProps> = ({ data, handleValueChan
 					<td className="px-4 py-2 border border-gray-700">{key}</td>
 					{Object.keys(data).map((langKey) => {
 						const translation = data[langKey].find((t) => t.key === key) || {};
+						console.log(translation);
 						return (
 							<td key={langKey} className="px-4 py-2 border border-gray-700">
 								<input
@@ -36,5 +37,3 @@ const TranslationRows: React.FC<TranslationRowsProps> = ({ data, handleValueChan
 		</>
 	);
 };
-
-export default TranslationRows;
