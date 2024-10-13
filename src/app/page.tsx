@@ -18,7 +18,6 @@ export type TranslationObject = {
 const TranslationTable = ({ translations }: { translations: Translations }) => {
 	const [data, setData] = useState(translations);
 
-	// Handle changes in translation values
 	const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>, langKey: string, id: number) => {
 		const { value } = e.target;
 		setData((prevData) => ({
@@ -31,6 +30,8 @@ const TranslationTable = ({ translations }: { translations: Translations }) => {
 
 	const addNewTranslation = () => {
 		const newKey = prompt("Enter new translation key:");
+
+		saveTranslations({});
 		if (!newKey) return;
 
 		setData((prevData) => {
@@ -52,7 +53,7 @@ const TranslationTable = ({ translations }: { translations: Translations }) => {
 
 	return (
 		<div className="flex flex-col items-center justify-center min-h-screen bg-black">
-			<h2 className="text-white text-3xl mb-6">Translation Table</h2>
+			<h2 className="text-white text-3xl mb-6">Transcend </h2>
 			<div className="w-full max-w-4xl">
 				<table className="w-full text-center bg-gray-800 rounded-lg overflow-hidden shadow-lg">
 					<TableHeader data={data} />
