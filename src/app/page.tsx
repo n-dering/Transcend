@@ -1,8 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../../components/Translation/Button";
 import { TableHeader } from "../../components/Translation/TableHeader";
-import { TranslationRows } from "../../components/Translation/TranslationRows";
+import { TranslationRows } from "../../components/Translation/TranslationTable";
+import { getTranslations } from "../../components/Translation/api";
 
 export type Translations = {
 	[lang: string]: TranslationObject[];
@@ -12,11 +13,11 @@ export type TranslationObject = {
 	id: number;
 	key: string;
 	value: string;
-	languageID: number;
 };
 
-const TranslationTable = ({ translations }: { translations: Translations }) => {
-	const [data, setData] = useState(translations);
+const TranslationTable = () => {
+	const [data, setData] = useState({});
+	const [temporaryKeys, setTemporaryKeys] = useState({});
 
 	const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>, langKey: string, id: number) => {
 		const { value } = e.target;
@@ -47,9 +48,19 @@ const TranslationTable = ({ translations }: { translations: Translations }) => {
 	};
 
 	const saveTranslations = () => {
-		console.log("Saving translations:", data);
 		alert("Translations saved! Check the console.");
 	};
+
+	useEffect(() => {
+		const getInitialData = async () => {
+			try {
+				const resData = await getTranslations();
+
+				setData(resData);
+			} catch (e) {}
+		};
+		getInitialData();
+	}, []);
 
 	return (
 		<div className="flex flex-col items-center justify-center min-h-screen bg-black">
@@ -58,7 +69,7 @@ const TranslationTable = ({ translations }: { translations: Translations }) => {
 				<table className="w-full text-center bg-gray-800 rounded-lg overflow-hidden shadow-lg">
 					<TableHeader data={data} />
 					<tbody>
-						<TranslationRows data={data} handleValueChange={handleValueChange} />
+						<TranslationRows data={data} temporaryKeys={temporaryKeys} handleValueChange={handleValueChange} />
 					</tbody>
 				</table>
 			</div>
@@ -74,21 +85,6 @@ const TranslationTable = ({ translations }: { translations: Translations }) => {
 	);
 };
 
-const translations: Translations = {
-	DE: [
-		{ id: 2, key: "address", value: "Haus", languageID: 2 },
-		{ id: 10, key: "fruit", value: "Apfel", languageID: 2 },
-		{ id: 15, key: "animal", value: "Hund", languageID: 2 },
-		{ id: 16, key: "color", value: "", languageID: 2 },
-	],
-	PL: [
-		{ id: 1, key: "address", value: "Dom", languageID: 1 },
-		{ id: 9, key: "fruit", value: "Jabłko", languageID: 1 },
-		{ id: 14, key: "animal", value: "Pies", languageID: 1 },
-		{ id: 16, key: "color", value: "Czerwony", languageID: 1 },
-	],
-};
-
-const App = () => <TranslationTable translations={translations} />;
+const App = () => <TranslationTable />;
 
 export default App;
