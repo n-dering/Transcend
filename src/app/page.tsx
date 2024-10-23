@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "../../components/Translation/Button";
 import { TableHeader } from "../../components/Translation/TableHeader";
 import { TranslationRows } from "../../components/Translation/TranslationTable";
@@ -16,18 +16,36 @@ export type TranslationObject = {
 };
 
 const TranslationTable = () => {
-	const [data, setData] = useState({});
+	const [data, setData] = useState({
+		pl: [
+			{ key: "greeting", value: "test.test", updated_at: "2024-10-20T12:26:04.285241Z" },
+			{ key: "ab.ca.c", value: "tjfy", updated_at: "2024-10-20T12:26:16.365679Z" },
+			{ key: "new_greeting", value: "Dzień dobryresdfgresdddd", updated_at: "2024-10-20T12:49:46.029978Z" },
+			{ key: "new_farewell", value: "Do widzenia", updated_at: "2024-10-20T12:49:46.034114Z" },
+		],
+		de: [
+			{ key: "new_greeting", value: "Guten Tag", updated_at: "2024-10-20T12:49:46.020569Z" },
+			{ key: "new_farewell", value: "Tschüss", updated_at: "2024-10-20T12:49:46.024787Z" },
+		],
+	});
 	const [temporaryKeys, setTemporaryKeys] = useState({});
 
-	const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>, langKey: string, id: number) => {
-		const { value } = e.target;
-		setData((prevData) => ({
-			...prevData,
-			[langKey]: prevData[langKey].map((translation) =>
-				translation.id === id ? { ...translation, value } : translation
-			),
-		}));
-	};
+	const handleValueChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>, langKey: string, id: number) => {
+			console.log(langKey, id);
+			const { value } = e.target;
+
+			const x = {
+				...data,
+				[langKey]: data[langKey].map((translation) =>
+					translation.key === id ? { ...translation, value } : translation
+				),
+			};
+			console.log(x, "few");
+			setData(x);
+		},
+		[data]
+	);
 
 	const addNewTranslation = () => {
 		const newKey = prompt("Enter new translation key:");
