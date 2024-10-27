@@ -41,7 +41,6 @@ const TranslationTable = () => {
 					translation.key === id ? { ...translation, value } : translation
 				),
 			};
-			console.log(x, "few");
 			setData(x);
 		},
 		[data]
@@ -52,7 +51,6 @@ const TranslationTable = () => {
 
 		saveTranslations({});
 		if (!newKey) return;
-
 		setData((prevData) => {
 			const updatedData: Translations = {};
 			for (const langKey in prevData) {
@@ -65,9 +63,7 @@ const TranslationTable = () => {
 		});
 	};
 
-	const saveTranslations = () => {
-		alert("Translations saved! Check the console.");
-	};
+	const saveTranslations = () => {};
 
 	useEffect(() => {
 		const getInitialData = async () => {
