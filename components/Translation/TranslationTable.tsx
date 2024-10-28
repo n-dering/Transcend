@@ -4,7 +4,6 @@ import { TranslationColumns } from "./TranslationColumns";
 export const TranslationRows = ({
 	data,
 	handleValueChange,
-	temporaryKeys,
 }: {
 	data: Translations;
 	temporaryKeys: Translations;
@@ -20,12 +19,6 @@ export const TranslationRows = ({
 			{Array.from(allKeys).map((key) => (
 				<tr key={key} className="text-white">
 					<td className="px-4 py-2 border border-gray-700">{key}</td>
-					<TranslationColumns
-						data={temporaryKeys}
-						translationKey={key}
-						handleValueChange={handleValueChange}
-						isTemporary
-					/>
 					<TranslationColumns data={data} translationKey={key} handleValueChange={handleValueChange} />
 				</tr>
 			))}
