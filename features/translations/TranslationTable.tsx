@@ -1,13 +1,12 @@
-import { Translations } from "@/app/page";
+import { LanguageCode, TranslationsByLanguage } from "@/app/page";
 import { TranslationColumns } from "./TranslationColumns";
 
 export const TranslationRows = ({
 	data,
 	handleValueChange,
 }: {
-	data: Translations;
-	temporaryKeys: Translations;
-	handleValueChange: (e: React.ChangeEvent<HTMLInputElement>, langKey: string, id: string) => void;
+	data: TranslationsByLanguage;
+	handleValueChange: (e: React.ChangeEvent<HTMLTextAreaElement>, langKey: LanguageCode, key: string) => void;
 }) => {
 	const allKeys = new Set<string>();
 	Object.values(data).forEach((translations) => {

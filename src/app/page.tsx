@@ -1,25 +1,25 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
-import { Button } from "../../components/Translation/Button";
-import { TableHeader } from "../../components/Translation/TableHeader";
-import { TranslationRows } from "../../components/Translation/TranslationTable";
-import { getTranslations } from "../../components/Translation/api";
+import { Button } from "../../features/translations/Button";
+import { TableHeader } from "../../features/translations/TableHeader";
+import { TranslationRows } from "../../features/translations/TranslationTable";
+import { api } from "../../features/translations/api";
 
-type translation = "pl" | "de";
+export type LanguageCode = "pl" | "de";
 
-export type Translations = {
-	[lang in translation]: TranslationObject[];
+export type TranslationsByLanguage = {
+	[lang in LanguageCode]: TranslationEntry[];
 };
 
-export type TranslationObject = {
-	id: number;
+export type TranslationEntry = {
 	key: string;
 	value: string;
+	updated_at?: string;
 	isTemporary?: boolean;
 };
 
 const TranslationTable = () => {
-	const [data, setData] = useState({
+	const [translationsData, setTranslationData] = useState<TranslationsByLanguage>({
 		pl: [
 			{ key: "greeting", value: "Cześć", updated_at: "2024-10-20T12:26:04.285241Z" },
 			{ key: "farewell", value: "Do widzenia", updated_at: "2024-10-20T12:26:16.365679Z" },
@@ -40,45 +40,38 @@ const TranslationTable = () => {
 		],
 	});
 
-	const [changedValues, setChangedValues] = useState<Record<translation, Record<string, string>>>({ pl: {}, de: {} });
+	const handleValueChange = useCallback(
+		(e: React.ChangeEvent<HTMLTextAreaElement>, langKey: LanguageCode, key: string) => {
+			const { value } = e.target;
 
-	const handleValueChange = useCallback((e: React.ChangeEvent<HTMLInputElement>, langKey: translation, id: string) => {
-		const { value } = e.target;
-
-		setData((prevData) => ({
-			...prevData,
-			[langKey]: prevData[langKey].map((translation) =>
-				translation.key === id ? { ...translation, value, isTemporary: true } : translation
-			),
-		}));
-
-		setChangedValues((prevChangedValues) => ({
-			...prevChangedValues,
-			[langKey]: {
-				...prevChangedValues[langKey],
-				[id]: value,
-			},
-		}));
-	}, []);
+			setTranslationData((prevData) => ({
+				...prevData,
+				[langKey]: prevData[langKey].map((translation) =>
+					translation.key === key ? { ...translation, value, isTemporary: true } : translation
+				),
+			}));
+		},
+		[]
+	);
 
 	const addNewTranslation = () => {
 		const newKey = prompt("Enter new translation key:");
 
 		if (!newKey) return;
-		setData((prevData) => {
-			const updatedData: Translations = {};
-			for (const langKey in prevData) {
-				updatedData[langKey] = [...prevData[langKey], { key: newKey, value: "", isTemporary: true }];
-			}
+
+		setTranslationData((prevData) => {
+			const updatedData: TranslationsByLanguage = {
+				pl: [...prevData.pl, { key: newKey, value: "", isTemporary: true }],
+				de: [...prevData.de, { key: newKey, value: "", isTemporary: true }],
+			};
 			return updatedData;
 		});
 	};
 
 	const saveTranslations = async () => {
-		console.log(data);
-		console.log(changedValues);
+		//TODO: save only changed  translations
 		try {
-			// await saveTranslationsToBackend(changedValues);
+			api.saveTranslations(translationsData);
 		} catch (error) {
 			console.error("Failed to save translations:", error);
 		}
@@ -87,8 +80,8 @@ const TranslationTable = () => {
 	useEffect(() => {
 		const getInitialData = async () => {
 			try {
-				const resData = await getTranslations();
-				setData(resData);
+				const resData = await api.getTranslations();
+				setTranslationData(resData);
 			} catch (e) {
 				console.error(e);
 			}
@@ -101,9 +94,9 @@ const TranslationTable = () => {
 			<h2 className="text-white text-3xl mb-6">Transcend</h2>
 			<div className="w-full max-w-4xl">
 				<table className="w-full text-center bg-gray-800 rounded-lg overflow-hidden shadow-lg">
-					<TableHeader data={data} />
+					<TableHeader data={translationsData} />
 					<tbody>
-						<TranslationRows data={data} handleValueChange={handleValueChange} />
+						<TranslationRows data={translationsData} handleValueChange={handleValueChange} />
 					</tbody>
 				</table>
 			</div>

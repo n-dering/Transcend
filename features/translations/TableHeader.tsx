@@ -1,6 +1,6 @@
-import { Translations } from "@/app/page";
+import { TranslationsByLanguage } from "@/app/page";
 
-export const TableHeader = ({ data }: { data: Translations }) => {
+export const TableHeader = ({ data }: { data: TranslationsByLanguage }) => {
 	return (
 		<thead className="bg-gray-900">
 			<tr>
